@@ -54,7 +54,9 @@ jobs:
           pacman -Syu --needed --noconfirm go protobuf wget zip
 
       - name: Run go generate
-        run: go generate
+        run: |
+          go generate proto.go
+          go generate
 
       - name: Build V2Ray
         run: |

@@ -20,8 +20,6 @@ import (
 	"github.com/v2fly/v2ray-core/v4/transport/internet"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v4/common/errors/errorgen
-
 type Forwarder struct {
 	ctx context.Context
 

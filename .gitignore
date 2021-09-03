@@ -28,5 +28,5 @@ mockgen
 vprotogen
 !infra/vprotogen/
 errorgen
-!common/errors/errorgen/
+!infra/errorgen/
 *.dat

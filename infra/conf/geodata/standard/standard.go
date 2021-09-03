@@ -10,8 +10,6 @@ import (
 	"github.com/v2fly/v2ray-core/v4/infra/conf/geodata"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v4/common/errors/errorgen
-
 func loadIP(filename, country string) ([]*router.CIDR, error) {
 	geoipBytes, err := filesystem.ReadAsset(filename)
 	if err != nil {

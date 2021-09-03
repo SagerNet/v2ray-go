@@ -9,8 +9,6 @@ import (
 	"github.com/v2fly/v2ray-core/v4/common/protocol"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v4/common/errors/errorgen
-
 type StringList []string
 
 func NewStringList(raw []string) *StringList {

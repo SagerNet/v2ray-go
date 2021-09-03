@@ -10,8 +10,6 @@ import (
 	"github.com/v2fly/v2ray-core/v4/common/net"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v4/common/errors/errorgen
-
 var _ buf.Writer = (*Conn)(nil)
 
 type Conn struct {

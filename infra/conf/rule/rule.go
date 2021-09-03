@@ -11,8 +11,6 @@ import (
 	"github.com/v2fly/v2ray-core/v4/infra/conf/cfgcommon"
 )
 
-//go:generate go run github.com/v2fly/v2ray-core/v4/common/errors/errorgen
-
 func parseDomainRule(ctx context.Context, domain string) ([]*router.Domain, error) {
 	cfgEnv := cfgcommon.GetConfigureLoadingEnvironment(ctx)
 	geoLoader := cfgEnv.GetGeoLoader()
