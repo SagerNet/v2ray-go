@@ -18,7 +18,6 @@ import (
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/freedom"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/inbound"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/outbound"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/testing/servers/tcp"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/testing/servers/udp"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/transport/internet"
@@ -115,18 +114,14 @@ func TestVMessDynamicPort(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),
@@ -172,8 +167,7 @@ func TestVMessGCM(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -212,22 +206,17 @@ func TestVMessGCM(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -278,8 +267,7 @@ func TestVMessGCMReadv(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -318,22 +306,17 @@ func TestVMessGCMReadv(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -387,8 +370,7 @@ func TestVMessGCMUDP(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -427,22 +409,17 @@ func TestVMessGCMUDP(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -490,8 +467,7 @@ func TestVMessChacha20(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -530,22 +506,17 @@ func TestVMessChacha20(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_CHACHA20_POLY1305,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_CHACHA20_POLY1305,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -594,8 +565,7 @@ func TestVMessNone(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -634,22 +604,17 @@ func TestVMessNone(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_NONE,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_NONE,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -700,8 +665,7 @@ func TestVMessKCP(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -740,22 +704,17 @@ func TestVMessKCP(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -830,8 +789,7 @@ func TestVMessKCPLarge(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -870,22 +828,17 @@ func TestVMessKCPLarge(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -961,8 +914,7 @@ func TestVMessGCMMux(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -1007,22 +959,17 @@ func TestVMessGCMMux(t *testing.T) {
 						Concurrency: 4,
 					},
 				}),
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -1080,8 +1027,7 @@ func TestVMessGCMMuxUDP(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -1140,22 +1086,17 @@ func TestVMessGCMMuxUDP(t *testing.T) {
 						Concurrency: 4,
 					},
 				}),
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -1211,8 +1152,7 @@ func TestVMessZero(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -1251,22 +1191,17 @@ func TestVMessZero(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_ZERO,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_ZERO,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -1314,8 +1249,7 @@ func TestVMessGCMLengthAuth(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -1354,23 +1288,18 @@ func TestVMessGCMLengthAuth(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-										TestsEnabled: "AuthenticatedLength",
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+								TestsEnabled: "AuthenticatedLength",
+							}),
 						},
 					},
 				}),
@@ -1422,7 +1351,6 @@ func TestVMessGCMLengthAuthPlusNoTerminationSignal(t *testing.T) {
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
 								Id:           userID.String(),
-								AlterId:      64,
 								TestsEnabled: "AuthenticatedLength|NoTerminationSignal",
 							}),
 						},
@@ -1462,23 +1390,18 @@ func TestVMessGCMLengthAuthPlusNoTerminationSignal(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-										TestsEnabled: "AuthenticatedLength|NoTerminationSignal",
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+								TestsEnabled: "AuthenticatedLength|NoTerminationSignal",
+							}),
 						},
 					},
 				}),

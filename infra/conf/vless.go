@@ -12,7 +12,6 @@ import (
 	"github.com/Shadowsocks-NET/v2ray-go/v4/infra/conf/cfgcommon"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vless"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vless/inbound"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vless/outbound"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -119,55 +118,41 @@ func (c *VLessInboundConfig) Build() (proto.Message, error) {
 	return config, nil
 }
 
-type VLessOutboundVnext struct {
+type VLessOutboundConfig struct {
 	Address *cfgcommon.Address `json:"address"`
 	Port    uint16             `json:"port"`
 	Users   []json.RawMessage  `json:"users"`
 }
 
-type VLessOutboundConfig struct {
-	Vnext []*VLessOutboundVnext `json:"vnext"`
-}
-
 // Build implements Buildable
 func (c *VLessOutboundConfig) Build() (proto.Message, error) {
-	config := new(outbound.Config)
-
-	if len(c.Vnext) == 0 {
-		return nil, newError(`VLESS settings: "vnext" is empty`)
+	if c.Address == nil {
+		return nil, newError(`VLESS vnext: "address" is not set`)
 	}
-	config.Vnext = make([]*protocol.ServerEndpoint, len(c.Vnext))
-	for idx, rec := range c.Vnext {
-		if rec.Address == nil {
-			return nil, newError(`VLESS vnext: "address" is not set`)
-		}
-		if len(rec.Users) == 0 {
-			return nil, newError(`VLESS vnext: "users" is empty`)
-		}
-		spec := &protocol.ServerEndpoint{
-			Address: rec.Address.Build(),
-			Port:    uint32(rec.Port),
-			User:    make([]*protocol.User, len(rec.Users)),
-		}
-		for idx, rawUser := range rec.Users {
-			user := new(protocol.User)
-			if err := json.Unmarshal(rawUser, user); err != nil {
-				return nil, newError(`VLESS users: invalid user`).Base(err)
-			}
-			account := new(vless.Account)
-			if err := json.Unmarshal(rawUser, account); err != nil {
-				return nil, newError(`VLESS users: invalid user`).Base(err)
-			}
-
-			if account.Encryption != "none" {
-				return nil, newError(`VLESS users: please add/set "encryption":"none" for every user`)
-			}
-
-			user.Account = serial.ToTypedMessage(account)
-			spec.User[idx] = user
-		}
-		config.Vnext[idx] = spec
+	if len(c.Users) == 0 {
+		return nil, newError(`VLESS vnext: "users" is empty`)
 	}
+	spec := &protocol.ServerEndpoint{
+		Address: c.Address.Build(),
+		Port:    uint32(c.Port),
+		User:    make([]*protocol.User, len(c.Users)),
+	}
+	for idx, rawUser := range c.Users {
+		user := new(protocol.User)
+		if err := json.Unmarshal(rawUser, user); err != nil {
+			return nil, newError(`VLESS users: invalid user`).Base(err)
+		}
+		account := new(vless.Account)
+		if err := json.Unmarshal(rawUser, account); err != nil {
+			return nil, newError(`VLESS users: invalid user`).Base(err)
+		}
 
-	return config, nil
+		if account.Encryption != "none" {
+			return nil, newError(`VLESS users: please add/set "encryption":"none" for every user`)
+		}
+
+		user.Account = serial.ToTypedMessage(account)
+		spec.User[idx] = user
+	}
+	return spec, nil
 }

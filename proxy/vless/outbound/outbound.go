@@ -10,7 +10,6 @@ import (
 	"time"
 
 	core "github.com/Shadowsocks-NET/v2ray-go/v4"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/common"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/common/buf"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/common/net"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/common/protocol"
@@ -26,33 +25,27 @@ import (
 )
 
 func init() {
-	common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
-		return New(ctx, config.(*Config))
-	}))
+	// common.Must(common.RegisterConfig((*protocol.ServerEndpoint)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
+	// 	return New(ctx, config.(*protocol.ServerEndpoint))
+	// }))
 }
 
 // Handler is an outbound connection handler for VLess protocol.
 type Handler struct {
-	serverList    *protocol.ServerList
-	serverPicker  protocol.ServerPicker
+	server        *protocol.ServerSpec
 	policyManager policy.Manager
 }
 
 // New creates a new VLess outbound handler.
-func New(ctx context.Context, config *Config) (*Handler, error) {
-	serverList := protocol.NewServerList()
-	for _, rec := range config.Vnext {
-		s, err := protocol.NewServerSpecFromPB(rec)
-		if err != nil {
-			return nil, newError("failed to parse server spec").Base(err).AtError()
-		}
-		serverList.AddServer(s)
+func New(ctx context.Context, config *protocol.ServerEndpoint) (*Handler, error) {
+	server, err := protocol.NewServerSpecFromPB(config)
+	if err != nil {
+		return nil, newError("failed to parse server spec").Base(err).AtError()
 	}
 
 	v := core.MustFromContext(ctx)
 	handler := &Handler{
-		serverList:    serverList,
-		serverPicker:  protocol.NewRoundRobinServerPicker(serverList),
+		server:        server,
 		policyManager: v.GetFeature(policy.ManagerType()).(policy.Manager),
 	}
 
@@ -61,13 +54,11 @@ func New(ctx context.Context, config *Config) (*Handler, error) {
 
 // Process implements proxy.Outbound.Process().
 func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer internet.Dialer) error {
-	var rec *protocol.ServerSpec
 	var conn internet.Connection
 
 	if err := retry.ExponentialBackoff(5, 200).On(func() error {
-		rec = h.serverPicker.PickServer()
 		var err error
-		conn, err = dialer.Dial(ctx, rec.Destination())
+		conn, err = dialer.Dial(ctx, h.server.Destination())
 		if err != nil {
 			return err
 		}
@@ -83,7 +74,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 	}
 
 	target := outbound.Target
-	newError("tunneling request to ", target, " via ", rec.Destination()).AtInfo().WriteToLog(session.ExportIDToError(ctx))
+	newError("tunneling request to ", target, " via ", h.server.Destination()).AtInfo().WriteToLog(session.ExportIDToError(ctx))
 
 	command := protocol.RequestCommandTCP
 	if target.Network == net.Network_UDP {
@@ -95,7 +86,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 
 	request := &protocol.RequestHeader{
 		Version: encoding.Version,
-		User:    rec.PickUser(),
+		User:    h.server.PickUser(),
 		Command: command,
 		Address: target.Address,
 		Port:    target.Port,

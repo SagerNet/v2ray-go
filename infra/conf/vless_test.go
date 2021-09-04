@@ -9,7 +9,6 @@ import (
 	. "github.com/Shadowsocks-NET/v2ray-go/v4/infra/conf"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vless"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vless/inbound"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vless/outbound"
 )
 
 func TestVLessOutbound(t *testing.T) {
@@ -33,24 +32,20 @@ func TestVLessOutbound(t *testing.T) {
 				}]
 			}`,
 			Parser: loadJSON(creator),
-			Output: &outbound.Config{
-				Vnext: []*protocol.ServerEndpoint{
+			Output: &protocol.ServerEndpoint{
+				Address: &net.IPOrDomain{
+					Address: &net.IPOrDomain_Domain{
+						Domain: "example.com",
+					},
+				},
+				Port: 443,
+				User: []*protocol.User{
 					{
-						Address: &net.IPOrDomain{
-							Address: &net.IPOrDomain_Domain{
-								Domain: "example.com",
-							},
-						},
-						Port: 443,
-						User: []*protocol.User{
-							{
-								Account: serial.ToTypedMessage(&vless.Account{
-									Id:         "27848739-7e62-4138-9fd3-098a63964b6b",
-									Encryption: "none",
-								}),
-								Level: 0,
-							},
-						},
+						Account: serial.ToTypedMessage(&vless.Account{
+							Id:         "27848739-7e62-4138-9fd3-098a63964b6b",
+							Encryption: "none",
+						}),
+						Level: 0,
 					},
 				},
 			},

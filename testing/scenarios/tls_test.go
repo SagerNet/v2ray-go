@@ -18,7 +18,6 @@ import (
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/freedom"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/inbound"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/outbound"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/testing/servers/tcp"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/testing/servers/udp"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/transport/internet"
@@ -90,18 +89,14 @@ func TestSimpleTLSConnection(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),
@@ -207,18 +202,14 @@ func TestAutoIssuingCertificate(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),
@@ -314,18 +305,14 @@ func TestTLSOverKCP(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),
@@ -416,18 +403,14 @@ func TestTLSOverWebSocket(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),
@@ -537,18 +520,14 @@ func TestHTTP2(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),
@@ -653,18 +632,14 @@ func TestSimpleTLSConnectionPinned(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),

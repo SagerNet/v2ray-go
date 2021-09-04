@@ -9,13 +9,11 @@ import (
 	"github.com/Shadowsocks-NET/v2ray-go/v4/infra/conf/cfgcommon"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/inbound"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/outbound"
 	"github.com/golang/protobuf/proto"
 )
 
 type VMessAccount struct {
 	ID          string `json:"id"`
-	AlterIds    uint16 `json:"alterId"`
 	Security    string `json:"security"`
 	Experiments string `json:"experiments"`
 }
@@ -38,8 +36,7 @@ func (a *VMessAccount) Build() *vmess.Account {
 		st = protocol.SecurityType_AUTO
 	}
 	return &vmess.Account{
-		Id:      a.ID,
-		AlterId: uint32(a.AlterIds),
+		Id: a.ID,
 		SecuritySettings: &protocol.SecurityConfig{
 			Type: st,
 		},
@@ -63,14 +60,12 @@ type FeaturesConfig struct {
 }
 
 type VMessDefaultConfig struct {
-	AlterIDs uint16 `json:"alterId"`
-	Level    byte   `json:"level"`
+	Level byte `json:"level"`
 }
 
 // Build implements Buildable
 func (c *VMessDefaultConfig) Build() *inbound.DefaultConfig {
 	config := new(inbound.DefaultConfig)
-	config.AlterId = uint32(c.AlterIDs)
 	config.Level = uint32(c.Level)
 	return config
 }
@@ -116,49 +111,35 @@ func (c *VMessInboundConfig) Build() (proto.Message, error) {
 	return config, nil
 }
 
-type VMessOutboundTarget struct {
+type VMessOutboundConfig struct {
 	Address *cfgcommon.Address `json:"address"`
 	Port    uint16             `json:"port"`
 	Users   []json.RawMessage  `json:"users"`
 }
 
-type VMessOutboundConfig struct {
-	Receivers []*VMessOutboundTarget `json:"vnext"`
-}
-
 // Build implements Buildable
 func (c *VMessOutboundConfig) Build() (proto.Message, error) {
-	config := new(outbound.Config)
-
-	if len(c.Receivers) == 0 {
-		return nil, newError("0 VMess receiver configured")
+	if len(c.Users) == 0 {
+		return nil, newError("0 user configured for VMess outbound")
 	}
-	serverSpecs := make([]*protocol.ServerEndpoint, len(c.Receivers))
-	for idx, rec := range c.Receivers {
-		if len(rec.Users) == 0 {
-			return nil, newError("0 user configured for VMess outbound")
-		}
-		if rec.Address == nil {
-			return nil, newError("address is not set in VMess outbound config")
-		}
-		spec := &protocol.ServerEndpoint{
-			Address: rec.Address.Build(),
-			Port:    uint32(rec.Port),
-		}
-		for _, rawUser := range rec.Users {
-			user := new(protocol.User)
-			if err := json.Unmarshal(rawUser, user); err != nil {
-				return nil, newError("invalid VMess user").Base(err)
-			}
-			account := new(VMessAccount)
-			if err := json.Unmarshal(rawUser, account); err != nil {
-				return nil, newError("invalid VMess user").Base(err)
-			}
-			user.Account = serial.ToTypedMessage(account.Build())
-			spec.User = append(spec.User, user)
-		}
-		serverSpecs[idx] = spec
+	if c.Address == nil {
+		return nil, newError("address is not set in VMess outbound config")
 	}
-	config.Receiver = serverSpecs
-	return config, nil
+	spec := &protocol.ServerEndpoint{
+		Address: c.Address.Build(),
+		Port:    uint32(c.Port),
+	}
+	for _, rawUser := range c.Users {
+		user := new(protocol.User)
+		if err := json.Unmarshal(rawUser, user); err != nil {
+			return nil, newError("invalid VMess user").Base(err)
+		}
+		account := new(VMessAccount)
+		if err := json.Unmarshal(rawUser, account); err != nil {
+			return nil, newError("invalid VMess user").Base(err)
+		}
+		user.Account = serial.ToTypedMessage(account.Build())
+		spec.User = append(spec.User, user)
+	}
+	return spec, nil
 }

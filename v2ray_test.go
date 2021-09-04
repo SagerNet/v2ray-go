@@ -18,7 +18,6 @@ import (
 	_ "github.com/Shadowsocks-NET/v2ray-go/v4/main/distro/all"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/dokodemo"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/outbound"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/testing/servers/tcp"
 )
 
@@ -63,18 +62,14 @@ func TestV2RayClose(t *testing.T) {
 		},
 		Outbound: []*OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(0),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(0),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id: userID.String(),
-									}),
-								},
-							},
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+							}),
 						},
 					},
 				}),

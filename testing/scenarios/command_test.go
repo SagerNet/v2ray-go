@@ -25,7 +25,6 @@ import (
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/freedom"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/inbound"
-	"github.com/Shadowsocks-NET/v2ray-go/v4/proxy/vmess/outbound"
 	"github.com/Shadowsocks-NET/v2ray-go/v4/testing/servers/tcp"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -180,8 +179,7 @@ func TestCommanderAddRemoveUser(t *testing.T) {
 					User: []*protocol.User{
 						{
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      u1.String(),
-								AlterId: 64,
+								Id: u1.String(),
 							}),
 						},
 					},
@@ -239,22 +237,17 @@ func TestCommanderAddRemoveUser(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      u2.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: u2.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
@@ -284,8 +277,7 @@ func TestCommanderAddRemoveUser(t *testing.T) {
 				User: &protocol.User{
 					Email: "test@v2fly.org",
 					Account: serial.ToTypedMessage(&vmess.Account{
-						Id:      u2.String(),
-						AlterId: 64,
+						Id: u2.String(),
 					}),
 				},
 			}),
@@ -375,8 +367,7 @@ func TestCommanderStats(t *testing.T) {
 							Level: 1,
 							Email: "test",
 							Account: serial.ToTypedMessage(&vmess.Account{
-								Id:      userID.String(),
-								AlterId: 64,
+								Id: userID.String(),
 							}),
 						},
 					},
@@ -423,22 +414,17 @@ func TestCommanderStats(t *testing.T) {
 		},
 		Outbound: []*core.OutboundHandlerConfig{
 			{
-				ProxySettings: serial.ToTypedMessage(&outbound.Config{
-					Receiver: []*protocol.ServerEndpoint{
+				ProxySettings: serial.ToTypedMessage(&protocol.ServerEndpoint{
+					Address: net.NewIPOrDomain(net.LocalHostIP),
+					Port:    uint32(serverPort),
+					User: []*protocol.User{
 						{
-							Address: net.NewIPOrDomain(net.LocalHostIP),
-							Port:    uint32(serverPort),
-							User: []*protocol.User{
-								{
-									Account: serial.ToTypedMessage(&vmess.Account{
-										Id:      userID.String(),
-										AlterId: 64,
-										SecuritySettings: &protocol.SecurityConfig{
-											Type: protocol.SecurityType_AES128_GCM,
-										},
-									}),
+							Account: serial.ToTypedMessage(&vmess.Account{
+								Id: userID.String(),
+								SecuritySettings: &protocol.SecurityConfig{
+									Type: protocol.SecurityType_AES128_GCM,
 								},
-							},
+							}),
 						},
 					},
 				}),
